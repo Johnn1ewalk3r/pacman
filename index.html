@@ -59,7 +59,7 @@
 
             //  We need this because the assets are on github pages
             //  Remove the next 2 lines if running locally
-            this.load.baseURL = 'https://johnn1ewalk3r.github.io/2016151/';
+            this.load.baseURL = 'https://johnn1ewalk3r.github.io/pacman/';
             this.load.crossOrigin = 'Johnn1ewalk3r';
 
             this.load.image('dot', 'assets/dot.png');
