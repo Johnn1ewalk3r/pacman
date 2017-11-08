@@ -225,12 +225,13 @@
         eatDot: function (pacman, dot) {
 
             dot.kill();
-            this.eat=this.add.audio('eatsound');
-        	this.eat.play();
+            
 
 
             if (this.dots.total === 0)
             {
+                this.eat=this.add.audio('eatsound');
+        	this.eat.play();
                 this.dots.callAll('revive');
             }
 
