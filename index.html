@@ -33,8 +33,8 @@
         this.marker = new Phaser.Point();
         this.turnPoint = new Phaser.Point();
 
-        this.directions = [ null, null, null, null, null ]
- ;       this.opposites = [ Phaser.NONE, Phaser.RIGHT, Phaser.LEFT, Phaser.DOWN, Phaser.UP ];
+        this.directions = [ null, null, null, null, null ];
+        this.opposites = [ Phaser.NONE, Phaser.RIGHT, Phaser.LEFT, Phaser.DOWN, Phaser.UP ];
 
         this.current = Phaser.NONE;
         this.turning = Phaser.NONE;
@@ -60,7 +60,7 @@
             //  We need this because the assets are on github pages
             //  Remove the next 2 lines if running locally
             this.load.baseURL = 'https://johnn1ewalk3r.github.io/pacman/';
-            sthis.load.crossOrigin = 'anonymous';
+            this.load.crossOrigin = 'Johnn1ewalk3r';
 
             this.load.image('dot', 'assets/dot.png');
             this.load.image('tiles', 'assets/pacman-tiles.png');
@@ -260,3 +260,4 @@
 
 </body>
 </html>
+
