@@ -119,7 +119,12 @@
             text = game.add.text(game.world.x, game.world.y, "Score: " + score, {
                 font: "15px Arial",
                 fill: "#oooooo"
-        },
+        }
+                                 text3 = game.add.text(game.world.x, game.world.y, "Lives: " + lives, {
+                font: "15px Arial",
+                fill: "#oooooo",
+            });
+                                 
 
         checkKeys: function () {
 
@@ -244,7 +249,7 @@
                 text3.setText("Lives: " + lives);
             }
             else {
-                // display loss message and nullify text3
+               
                 text3.setText("");
 
             
