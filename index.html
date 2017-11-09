@@ -17,8 +17,7 @@
     <script type="text/javascript">
 
     var game = new Phaser.Game(448, 496, Phaser.AUTO);
-        
-        
+
     var Pacman = function (game) {
 
         this.map = null;
@@ -58,7 +57,6 @@
 
         preload: function () {
             this.load.audio('themesound','audio/theme.wav');
-            this.load.audio('eatsound','audio/eat.wav');
 
             //  We need this because the assets are on github pages
             //  Remove the next 2 lines if running locally
@@ -106,10 +104,8 @@
 
             this.pacman.play('munch');
             this.move(Phaser.LEFT);
-            
-           
-           
-                                 
+
+        },
 
         checkKeys: function () {
 
@@ -225,15 +221,12 @@
 
         },
 
-        eatDot: function (pacman, dot, eatound) {
-             dot.kill(); 
-            this.eat=this.add.audio('eatsound');
-        	this.eat.play();
-            
+        eatDot: function (pacman, dot) {
+
+            dot.kill();
 
             if (this.dots.total === 0)
             {
-                
                 this.dots.callAll('revive');
             }
 
@@ -270,4 +263,3 @@
 
 </body>
 </html>
-
