@@ -15,7 +15,17 @@
 <body>
 
     <script type="text/javascript">
-
+        //metablites
+    var text;
+    var text2;
+    var text3;
+    var text4;
+    var score = 0;
+    var lives = 3;
+    var timer;
+    var total = 0;
+    var disable = 0;
+        
     var game = new Phaser.Game(448, 496, Phaser.AUTO);
 
     var Pacman = function (game) {
@@ -105,6 +115,28 @@
 
             this.pacman.play('munch');
             this.move(Phaser.LEFT);
+            //score
+             text = game.add.text(game.world.x, game.world.y, "Score: " + score, {
+                font: "15px Arial",
+                fill: "#oooooo"
+            });
+            text.anchor.set(0, -20.4);
+            text2 = game.add.text(game.world.x, game.world.y, "Timer: " + timer + " seconds", {
+                font: "15px Arial",
+                fill: "#oooooo",
+            });
+            text2.anchor.set(-1, -20.4);
+            text3 = game.add.text(game.world.x, game.world.y, "Lives: " + lives, {
+                font: "15px Arial",
+                fill: "#oooooo",
+            });
+             text3.anchor.set(-6, -20.4);
+            
+            timer = game.time.create(false);
+            
+            timer.loop(1000, updateCounter, this);
+            
+            timer.start()
 
         },
 
@@ -223,7 +255,20 @@
         },
 
         eatDot: function (pacman, dot, eatsound) {
-
+          
+            //score            
+         score++;
+            
+            text.setText("Score: " + score);
+            lives--;
+            if (lives >= 0) {
+                text3.setText("Lives: " + lives);
+            }
+            else {
+                // display loss message and nullify text3
+                text3.setText("");
+            }
+            
             dot.kill();
             this.eat=this.add.audio('eatsound');
         	this.eat.play();
