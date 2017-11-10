@@ -275,8 +275,10 @@
 
             if (this.dots.total === 0)
             {
+                game.time.events.add(Phaser.Timer.SECOND / 10, playWin, this);
                 this.dots.callAll('revive');
             }
+            
 
         },
 
@@ -300,8 +302,14 @@
             {
                 this.turn();
             }
+            //timerstop
+            text2.setText("Timer: " + total + " seconds");
+            if (total == 10 && disable == 0) {
+                this.bonuses.visible = true;
+                disable = 1;
+            }
 
-        }
+        },
 
     };
 
