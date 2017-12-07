@@ -25,6 +25,9 @@
     var timer;
     var total = 0;
     var disable = 0;
+    var enemy;
+    var enemy2;
+    var randomVar = 0;
         
     var game = new Phaser.Game(448, 496, Phaser.AUTO);
 
@@ -48,6 +51,7 @@
 
         this.current = Phaser.NONE;
         this.turning = Phaser.NONE;
+        this.enemy = null;
 
     };
 
@@ -71,13 +75,23 @@
 
             //  We need this because the assets are on github pages
             //  Remove the next 2 lines if running locally
-            this.load.baseURL = 'https://johnn1ewalk3r.github.io/pacman/';
-            this.load.crossOrigin = 'Johnn1ewalk3r';
+           // this.load.baseURL = 'https://johnn1ewalk3r.github.io/pacman/';
+            //this.load.crossOrigin = 'Johnn1ewalk3r';
 
             this.load.image('dot', 'assets/dot.png');
             this.load.image('tiles', 'assets/pacman-tiles.png');
             this.load.spritesheet('pacman', 'assets/pacman.png', 32, 32);
             this.load.tilemap('map', 'assets/pacman-map.json', null, Phaser.Tilemap.TILED_JSON);
+
+
+             this.load.spritesheet('teleport', 'assets/teleport.png', 32, 32);
+
+
+             game.load.image("enemy2","assets/cate.png")
+            
+             game.load.image("enemy","assets/cate.png");
+
+              this.load.image('banana', 'assets/banana.png');
 
             //  Needless to say, graphics (C)opyright Namco
 
@@ -93,8 +107,10 @@
             this.layer = this.map.createLayer('Pacman');
 
             this.dots = this.add.physicsGroup();
+             this.bananas = this.add.physicsGroup();
 
             this.map.createFromTiles(7, this.safetile, 'dot', this.layer, this.dots);
+             this.map.createFromTiles(36, this.safetile, 'banana', this.layer, this.bananas);
 
             //  The dots will need to be offset by 6px to put them back in the middle of the grid
             this.dots.setAll('x', 6, false, false, 1);
@@ -137,6 +153,29 @@
             timer.loop(1000, updateCounter, this);
             
             timer.start()
+
+             enemy = new Enemy(game, 0, 0, 1, 100);
+            game.add.existing(enemy);
+
+            enemy2 = new Enemy(game, 0, 0, 1, 100);
+            game.add.existing(enemy2);
+
+              this.bananas.setAll('x', 0, false, false, 1);
+            this.bananas.setAll('y', 0, false, false, 1);
+
+             this.teleport1 = this.add.sprite((1 * 16) + 8, (14 * 16) + 8, 'teleport', 0);
+            this.teleport1.anchor.set(0.5);
+            this.teleport1.animations.add('munch', [0, 1, 2, 1], 20, true);
+            this.teleport1.play('munch');
+            this.physics.arcade.enable(this.teleport1);
+            this.teleport1.body.setSize(16, 16, 0, 0);
+
+              this.teleport2 = this.add.sprite((26* 16) + 8, (14 * 16) + 8, 'teleport', 0);
+            this.teleport2.anchor.set(0.5);
+            this.teleport2.animations.add('munch', [0, 1, 2, 1], 20, true);
+            this.teleport2.play('munch');
+            this.physics.arcade.enable(this.teleport2);
+            this.teleport2.body.setSize(16, 16, 0, 0);
 
         },
 
@@ -278,17 +317,111 @@
                 game.time.events.add(Phaser.Timer.SECOND / 10, playWin, this);
                 this.dots.callAll('revive');
             }
+            if (this.dots.total === 0) {
+                //this.dots.callAll('revive');
+                //this.strawberries.callAll('revive');
+                //this.bananas.callAll('revive');
+                game.time.events.add(Phaser.Timer.SECOND / 10, playWin, this);
+            }
             
-
+                this.teleport1.body.velocity.x = 0;
+                this.teleport1.position.x = (1 * 16) + 8;
+                this.teleport1.position.y = (14 * 16) + 8;
+                this.teleport2.body.velocity.x = 0;
+                this.teleport2.position.x = (26 * 16) + 8;
+                this.teleport2.position.y = (14 * 16) + 8;
         },
 
+        eatBanana: function (pacman, banana) {
+            score = score + 5;
+            text.setText("Score: " + score);
+            banana.kill();
+            if (this.switch.isPlaying != true && this.switch2.isPlaying != true) {
+                this.switch.play();
+                this.counter = 1;
+            }
+            else {
+                if (this.counter % 6 == 0) {
+                    this.switch.play();
+                }
+                if (this.counter % 6 == 3) {
+                    this.switch2.play();
+                }
+                this.counter++;
+            }
+        },
+
+
+        kill_pacman: function (pacman) {
+            pacman.kill();
+            
+            lives--;
+            
+            if(lives > 1)
+                {
+                    lives = lives - 1;
+                    score = 0;
+                    game.state.star(game.state.current);
+                   
+                    pacman.kill();
+            
+                     this.pacman.position.x = (14 * 16) + 8;
+                    this.pacman.position.y = (17 * 16) + 8;
+                    this.move(Phaser.LEFT);
+                    this.enemy.position.x = (14 * 16) + 8;
+                    this.enemy.position.y = (23 * 16) + 8;
+                     }
+                else
+                {        
+                    lives = 3;
+                    score = 0;
+            
+                    
+                   
+                  
+                    location.reload();
+                    time = 0;
+                    this.dots.callAll('revive');
+                     this.pacman.position.x = (14 * 16) + 8;
+                    this.pacman.position.y = (17 * 16) + 8;
+                    this.move(Phaser.LEFT);
+                    this.enemy.position.x = (14 * 16) + 8;
+                    this.enemy.position.y = (23 * 16) + 8;
+                }
+        
+            
+        },
+        
+
+
+
+
         update: function () {
+        	if(this.physics.arcade.collide(this.pacman, this.teleport1))
+            {
+                this.pacman.position.x = (20 * 16) + 8;
+                this.pacman.position.y = (14 * 16) + 8;
+            }
+            if(this.physics.arcade.collide(this.pacman, this.teleport2))
+            {
+                this.pacman.position.x = (7 * 16) + 8;
+                this.pacman.position.y = (14 * 16) + 8;
+            }
+
+
           
             this.physics.arcade.collide(this.pacman, this.layer);
             this.physics.arcade.overlap(this.pacman, this.dots, this.eatDot, null, this);
+             this.physics.arcade.overlap(this.pacman, this.bananas, this.eatBanana, null, this);
 
             this.marker.x = this.math.snapToFloor(Math.floor(this.pacman.x), this.gridsize) / this.gridsize;
             this.marker.y = this.math.snapToFloor(Math.floor(this.pacman.y), this.gridsize) / this.gridsize;
+
+             this.physics.arcade.collide(enemy, this.layer, moveEnemy);
+            this.physics.arcade.collide(this.pacman, enemy, this.kill_pacman);
+            this.physics.arcade.collide(enemy2, this.layer, moveEnemy);
+            this.physics.arcade.collide(this.pacman, enemy2, this.kill_pacman);
+
 
             //  Update our grid sensors
             this.directions[1] = this.map.getTileLeft(this.layer.index, this.marker.x, this.marker.y);
@@ -297,21 +430,93 @@
             this.directions[4] = this.map.getTileBelow(this.layer.index, this.marker.x, this.marker.y);
 
             this.checkKeys();
-
-            if (this.turning !== Phaser.NONE)
+             if (this.turning !== Phaser.NONE)
             {
                 this.turn();
             }
+
+
+           
             //timerstop
-            text2.setText("Timer: " + total + " seconds");
+           /* text2.setText("Timer: " + total + " seconds");
             if (total == 10 && disable == 0) {
                 this.bonuses.visible = true;
                 disable = 1;
-            }
+            } */
 
         },
 
     };
+
+    
+     function updateCounter() {
+        total++;
+    };
+
+
+      Enemy = function (game, x, y, direction, speed) {
+        Phaser.Sprite.call(this, game, x+16, y+16, "enemy");
+        //this.anchor.setTo(.5);
+        game.physics.enable(this, Phaser.Physics.ARCADE);
+        this.xSpeed = direction*speed;
+        this.ySpeed = 30;
+	   
+    };
+    Enemy.prototype = Object.create(Phaser.Sprite.prototype);
+    Enemy.prototype.constructor = Enemy;
+    Enemy.prototype.update = function() {
+        //game.physics.arcade.collide(Enemy, game.layer, moveEnemy);
+        this.body.velocity.x = this.xSpeed;
+        this.body.velocity.y = this.ySpeed;
+	  
+    };
+    function moveEnemy(enemy,platform){
+        var rand = Math.floor((Math.random() * 10) + 1)%2;
+        if (enemy.xSpeed == 0) {
+            if (rand == 0) {
+                enemy.xSpeed = enemy.ySpeed;
+            }
+            else {
+                enemy.xSpeed = enemy.ySpeed*-1;
+            }
+            enemy.ySpeed = 0;
+        }
+        else {
+            if (rand == 0) {
+                enemy.ySpeed = enemy.xSpeed;
+            }
+            else {
+                enemy.ySpeed = enemy.xSpeed*-1;
+            }
+            enemy.xSpeed = 0;
+		
+        }
+	    
+    }
+    function moveEnemy2(enemy2,platform){
+        var rand = Math.floor((Math.random() * 10) + 1)%2;
+        if (enemy.xSpeed == 0) {
+            if (rand == 0) {
+                enemy2.xSpeed = enemy2.ySpeed;
+            }
+            else {
+                enemy2.xSpeed = enemy2.ySpeed*-1;
+            }
+            enemy2.ySpeed = 0;
+        }
+        else {
+            if (rand == 0) {
+                enemy2.ySpeed = enemy2.xSpeed;
+            }
+            else {
+                enemy2.ySpeed = enemy2.xSpeed*-1;
+            }
+            enemy2.xSpeed = 0;
+		
+        }
+	    
+    }
+
 
     game.state.add('Game', Pacman, true);
 
